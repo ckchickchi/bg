@@ -70,9 +70,14 @@
     <label>類型：
       <select id="gameType">
         <option value="">所有</option>
-        <option value="派對遊戲">派對遊戲</option>
-        <option value="策略遊戲">策略遊戲</option>
-        <option value="輕鬆遊戲">輕鬆遊戲</option>
+        <option value="RPG">RPG</option>
+        <option value="推理">推理</option>
+        <option value="身分推理">身分推理</option>
+        <option value="吃墩">吃墩</option>
+        <option value="猜詞">猜詞</option>
+        <option value="派對">派對</option>
+        <option value="抽象棋">抽象棋</option>
+        <option value="輕度策略">輕度策略</option>
         <!-- 可依需要新增 -->
       </select>
     </label>
@@ -130,6 +135,7 @@
             <div>🎮 模式：<span class="tag">${g.mode}</span></div>
             <div>📚 類型：<span class="tag">${g.type}</span></div>
             <div>🧠 核心機制：${g.mechanics.map(m => `<span class="tag">${m}</span>`).join(' ')}</div>
+            <div>BGG weight：<span class="tag">${g.BGGweight}</span></div>
             <p>${g.description}</p>
           </div>
         </div>
