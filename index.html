@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>我的遊戲清單</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f5f5f5;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .filters {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .game-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+
+    .game-card {
+      display: flex;
+      background: white;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .game-card img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 5px;
+      margin-right: 15px;
+    }
+
+    .game-info {
+      flex: 1;
+    }
+
+    .game-info h3 {
+      margin: 0 0 5px;
+    }
+
+    .tag {
+      display: inline-block;
+      background: #eee;
+      border-radius: 4px;
+      padding: 2px 6px;
+      margin: 2px 4px 2px 0;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎲 我的遊戲清單</h1>
+
+  <div class="filters">
+    <label>人數：
+      <input type="number" id="playerCount" min="1" max="20">
+    </label>
+
+    <label>類型：
+      <select id="gameType">
+        <option value="">所有</option>
+        <option value="派對遊戲">派對遊戲</option>
+        <option value="策略遊戲">策略遊戲</option>
+        <option value="輕鬆遊戲">輕鬆遊戲</option>
+        <!-- 可依需要新增 -->
+      </select>
+    </label>
+
+    <button onclick="filterGames()">篩選</button>
+  </div>
+
+  <div class="game-grid" id="gameList"></div>
+
+  <script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzXNVDFuN9ndH2dFVbPzPOtZvcId8LLN1bvvJB-CtjJ-k_UxdM0xFeciBZ4lqhedPzA0g/exec';
+
+    let games = [];
+
+    async function fetchGames() {
+      const res = await fetch(SCRIPT_URL);
+      const data = await res.json();
+      // 將 mechanics 從文字變成陣列（保險做法）
+      return data.map(game => {
+        if (typeof game.mechanics === 'string') {
+          game.mechanics = game.mechanics.split(',').map(m => m.trim());
+        }
+        game.players = [Number(game.minPlayers), Number(game.maxPlayers)];
+        return game;
+      });
+    }
+
+    async function init() {
+      games = await fetchGames();
+      filterGames();
+    }
+
+    function filterGames() {
+      const playerCount = parseInt(document.getElementById("playerCount").value);
+      const gameType = document.getElementById("gameType").value;
+
+      const filtered = games.filter(game => {
+        const [min, max] = game.players;
+        const playerMatch = isNaN(playerCount) || (playerCount >= min && playerCount <= max);
+        const typeMatch = !gameType || game.type === gameType;
+        return playerMatch && typeMatch;
+      });
+
+      renderGames(filtered);
+    }
+
+    function renderGames(gameListData) {
+      const gameList = document.getElementById("gameList");
+      gameList.innerHTML = gameListData.map(g => `
+        <div class="game-card">
+          <img src="${g.image}" alt="${g.name}">
+          <div class="game-info">
+            <h3>${g.name}</h3>
+            <div>👥 人數：${g.players[0]}-${g.players[1]}人</div>
+            <div>🎮 模式：<span class="tag">${g.mode}</span></div>
+            <div>📚 類型：<span class="tag">${g.type}</span></div>
+            <div>🧠 核心機制：${g.mechanics.map(m => `<span class="tag">${m}</span>`).join(' ')}</div>
+            <p>${g.description}</p>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    init();
+  </script>
+</body>
+</html>
