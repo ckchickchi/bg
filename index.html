@@ -77,7 +77,7 @@
         <option value="猜詞">猜詞</option>
         <option value="派對">派對</option>
         <option value="抽象棋">抽象棋</option>
-        <option value="輕度策略">輕度策略</option>
+        <option value="家庭或輕策">家庭或輕策</option>
         <option value="中度策略">中度策略</option>
         <!-- 可依需要新增 -->
       </select>
@@ -136,6 +136,7 @@
             <div>🎮 模式：<span class="tag">${g.mode}</span></div>
             <div>📚 類型：<span class="tag">${g.type}</span></div>
             <div>🧠 核心機制：${g.mechanics.map(m => `<span class="tag">${m}</span>`).join(' ')}</div>
+            <div>⏱️ 時間：<span class="tag">${g.time}</span></div>
             <div>BGG weight：<span class="tag">${g.BGGweight}</span></div>
             <p>${g.description}</p>
           </div>
